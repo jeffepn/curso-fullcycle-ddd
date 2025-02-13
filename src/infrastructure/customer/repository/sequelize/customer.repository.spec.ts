@@ -6,6 +6,7 @@ import CustomerRepository from "./customer.repository";
 
 describe("Customer repository test", () => {
   let sequelize: Sequelize;
+  const customerRepository = new CustomerRepository();
 
   beforeEach(async () => {
     sequelize = new Sequelize({
@@ -23,8 +24,7 @@ describe("Customer repository test", () => {
     await sequelize.close();
   });
 
-  it("should create a customer", async () => {
-    const customerRepository = new CustomerRepository();
+  it("should create a customer", async () => {    
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.Address = address;
@@ -44,8 +44,7 @@ describe("Customer repository test", () => {
     });
   });
 
-  it("should update a customer", async () => {
-    const customerRepository = new CustomerRepository();
+  it("should update a customer", async () => {    
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.Address = address;
@@ -67,8 +66,7 @@ describe("Customer repository test", () => {
     });
   });
 
-  it("should find a customer", async () => {
-    const customerRepository = new CustomerRepository();
+  it("should find a customer", async () => {    
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.Address = address;
@@ -79,16 +77,14 @@ describe("Customer repository test", () => {
     expect(customer).toStrictEqual(customerResult);
   });
 
-  it("should throw an error when customer is not found", async () => {
-    const customerRepository = new CustomerRepository();
+  it("should throw an error when customer is not found", async () => {    
 
     expect(async () => {
       await customerRepository.find("456ABC");
     }).rejects.toThrow("Customer not found");
   });
 
-  it("should find all customers", async () => {
-    const customerRepository = new CustomerRepository();
+  it("should find all customers", async () => {    
     const customer1 = new Customer("123", "Customer 1");
     const address1 = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer1.Address = address1;

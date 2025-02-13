@@ -1,3 +1,9 @@
+import EventDispatcher from "../../@shared/event/event-dispatcher";
+import CustomerAddressChanged from "../event/customer-address-changed";
+import CustomerCreatedEvent from "../event/customer-created.event";
+import EnviaConsoleLogHandler from "../event/handler/envia-console-log-handler";
+import EnviaConsoleLog1Handler from "../event/handler/envia-console-log1-handler";
+import EnviaConsoleLog2Handler from "../event/handler/envia-console-log2-handler";
 import Address from "../value-object/address";
 
 export default class Customer {
@@ -6,11 +12,17 @@ export default class Customer {
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
+  static eventDispatcher = new EventDispatcher();
+  static enviaConsoleLog1Handler = new EnviaConsoleLog1Handler();
+  static enviaConsoleLog2Handler = new EnviaConsoleLog2Handler();
+  static enviaConsoleLogHandler = new EnviaConsoleLogHandler();
 
   constructor(id: string, name: string) {
     this._id = id;
     this._name = name;
     this.validate();
+    this.registerHanlers();
+    this.notifyCreatedCustomer();
   }
 
   get id(): string {
@@ -45,6 +57,7 @@ export default class Customer {
   
   changeAddress(address: Address) {
     this._address = address;
+    this.notifyCustomerAddressChanged();
   }
 
   isActive(): boolean {
@@ -68,5 +81,23 @@ export default class Customer {
 
   set Address(address: Address) {
     this._address = address;
+  }
+
+  private registerHanlers() {
+    Customer.eventDispatcher.register("CustomerCreatedEvent", Customer.enviaConsoleLog1Handler);
+    Customer.eventDispatcher.register("CustomerCreatedEvent", Customer.enviaConsoleLog2Handler);
+    Customer.eventDispatcher.register("CustomerAddressChanged", Customer.enviaConsoleLogHandler);
+  }
+
+  private notifyCreatedCustomer() {
+    Customer.eventDispatcher.notify(new CustomerCreatedEvent({}));
+  }
+
+  private notifyCustomerAddressChanged() {
+    Customer.eventDispatcher.notify(new CustomerAddressChanged({
+      id: this._id,
+      name: this._name,
+      address: this._address.toString()
+    }));
   }
 }
